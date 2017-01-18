@@ -20,8 +20,9 @@ class Config(object):
            
 if __name__ == '__main__':
     config = Config()
-    print(config.UserName)
+    print(config.Login)
     print(config.Password)
+    print(config.UserName)
             
 
     

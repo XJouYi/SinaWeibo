@@ -151,13 +151,6 @@ if __name__ == '__main__':
     weibo = Weibo(Config())
     weibo.postMessage('你好')
     weibo.postImage('分享图片2','/Users/jinyi/Downloads/3.png')
-    # weibo.postMessage("hello,world")
-    # file = open('/Users/jinyi/Downloads/1.png', 'r')
-    # all_the_text = file.read()
-    # print(all_the_text)
-    # for byte in all_the_text:
-    #     temp = binascii.b2a_hex(byte)
-    # file.close()
     print('Finish')
     
         
