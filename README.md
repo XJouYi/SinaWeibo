@@ -10,8 +10,9 @@ python脚本,支持非官方API 方式登录新浪微博发送消息和图片
 >WeiboUserName : 微博中文名
 
 ## 依赖库
-sudo pip install requests
-sudo pip install rsa
+>sudo pip install requests
+
+>sudo pip install rsa
 
 
 
