@@ -85,11 +85,11 @@ class Weibo(object):
     def postData(self,data):
         currTime = "%d" % (time.time()*1000)
         self.session.headers["Host"]="weibo.com"
-        self.session.headers["Origin"]="http://weibo.com"
-        Referer = "http://www.weibo.com/u/%s/home?wvr=5" % self.uid
+        self.session.headers["Origin"]="https://weibo.com"
+        Referer = "https://www.weibo.com/u/%s/home?wvr=5" % self.uid
         self.session.headers["Referer"] = Referer
         resp = self.session.post(
-            'http://weibo.com/aj/mblog/add?ajwvr=6&__rnd=%s'%currTime,data = data
+            'https://weibo.com/aj/mblog/add?ajwvr=6&__rnd=%s'%currTime,data = data
         )
 
     def postMessage(self,message):
@@ -105,6 +105,7 @@ class Weibo(object):
             'module':'stissue',
             'pub_source':'main_',
             'pub_type':'dialog',
+            'isPri':0,
             '_t':0
         }
         self.postData(data)
@@ -117,11 +118,11 @@ class Weibo(object):
         url = 'weibo.com/u/'+self.uid
         atName = "@"+self.userName
         
-        self.session.headers["Referer"] = "http://js.t.sinajs.cn/t6/home/static/swf/MultiFilesUpload.swf?version=446d5fa804a6fbf9"
-        self.session.headers["Host"]="picupload.service.weibo.com"
-        self.session.headers["Origin"]="http://js.t.sinajs.cn"
+        self.session.headers["Referer"] = "https://weibo.com/"+self.userName+"/home"
+        self.session.headers["Host"]="picupload.weibo.com"
+        self.session.headers["Origin"]="https://weibo.com"
         resp = self.session.post(
-            'http://picupload.service.weibo.com/interface/pic_upload.php?app=miniblog'+
+            'https://picupload.weibo.com/interface/pic_upload.php?app=miniblog'+
             '&data=1&url='+url+'&markpos=1&logo=1&nick='+atName+'&marks=1&url='+url+
             '&mime=image/png&ct='+str(random.random()),
             data=payload

@@ -6,8 +6,8 @@ from Weibo import Weibo
 if __name__ == '__main__':
     config = Config()
     weibo = Weibo(config)
-    weibo.postMessage('你好')
-    weibo.postImage('分享图片2','/Downloads/3.png')
+    # weibo.postMessage('你好4')
+    weibo.postImage('分享图片4','/Downloads/4.png')
     print('Finish')
 	
 
