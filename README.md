@@ -6,7 +6,7 @@
 ## API
 | 名称        | 参数    |  说明  |
 | --------   | -----:  | :----: |
-| uploadPic  | picPath                |   上传图片到微博       |
+| uploadPic  | picPath                |   上传图片            |
 | postMessage| message                |   发送文本微博         |
 | postImage  | message,*picPaths      |   发送文本加图片微博(图片可多张)    |
 
