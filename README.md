@@ -1,18 +1,22 @@
 # SinaWeibo
-python脚本,支持非官方API 方式登录新浪微博发送消息和图片
+>1.python脚本,支持非官方API 方式登录新浪微博发送消息和图片
 
-## 配置文件config.json
+>2.python2.7版在[https://github.com/XJouYi/SinaWeibo/releases/tag/v0.1]
 
->WeiboLogin : 微博账号
+## API
+| 名称        | 参数    |  说明  |
+| --------   | -----:  | :----: |
+| uploadPic  | picPath                |   上传图片到微博       |
+| postMessage| message                |   发送文本微博         |
+| postImage  | message,*picPaths      |   发送文本加图片微博(图片可多张)    |
 
->WeiboPassWord : 微博密码
-
->WeiboUserName : 微博中文名
+## Demo
+>Demo.py
 
 ## 依赖库
->sudo pip install requests
+>pip3 install requests
 
->sudo pip install rsa
+>pip3 install rsa
 
 
 
