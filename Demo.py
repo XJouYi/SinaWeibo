@@ -5,7 +5,7 @@ import time
 
 
 if __name__ == '__main__':
-    wb= Weibo("morality.king@gmail.com","qwedsazxcvfrtgb")
+    wb= Weibo("","")
     wb.postMessage("0.2测试1:文本")
     time.sleep(1)
     wb.postImage("0.2测试2:一张图片","/Downloads/4.png")
