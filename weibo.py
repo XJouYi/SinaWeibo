@@ -74,7 +74,7 @@ class Weibo(object):
         try:
             result, msg,data = utils.checkResultMessage(resp.content)
             if result == True:
-                print("消息发送成功:%s" % data["text"])
+                print("消息发送成功:%s" % data["html"])
             else:
                 print("消息发送失败:%s" % msg)
         except Exception as e:
