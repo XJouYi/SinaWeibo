@@ -5,19 +5,20 @@ import json
 import random
 import re
 import time
-
 import requests
 
+from bs4 import BeautifulSoup
 from common import wconfig
 from common import utils
 
 
-class weibo(object):
+class Weibo(object):
 
     logincode = ""
     password = ""
     uid = ""
     homeUrl = ""
+
     def __init__(self,logincode,password):
         self.logincode = logincode
         self.password = password
@@ -27,26 +28,39 @@ class weibo(object):
             "User-Agent": wconfig.user_agent
         }
         self.__login()
-
+        follow, fans, weibo = self.userInfo()
+        print("关注：%s,粉丝:%s,微博:%s"%(follow,fans,weibo))
 
     def __login(self):
         try:
-            resp = self.session.get('http://login.sina.com.cn/sso/prelogin.php?entry=weibo&callback=sinaSSOController.preloginCallBack&su=%s&rsakt=mod&checkpin=1&client=%s' %
+            resp = self.session.get('https://login.sina.com.cn/sso/prelogin.php?entry=weibo&callback=sinaSSOController.preloginCallBack&su=%s&rsakt=mod&checkpin=1&client=%s' %
                                     (base64.b64encode(self.logincode.encode('utf-8')), wconfig.WBCLIENT)
             )
             pre_login = json.loads(re.match(r'[^{]+({.+?})', resp.text).group(1))
-            resp = self.session.post( 'http://login.sina.com.cn/sso/login.php?client=%s' %
+            resp = self.session.post( 'https://login.sina.com.cn/sso/login.php?client=%s' %
                                       wconfig.WBCLIENT, data=utils.getLoginStructure(self.logincode,self.password,pre_login)
             )
-            resp = self.session.get(re.search('replace\\(\'([^\']+)\'\\)', resp.text).group(1))
+            crossdomain2 = re.search('(http[s]{0,1}://[a-zA-Z0-9\\.\\-]+\\.([a-zA-Z]{2,4})(:\\d+)?(/[a-zA-Z0-9\\.\\-~!@#$%^&*+?:_/=<>]*)?)|((www.)|[a-zA-Z0-9\\.\\-]+\\.([a-zA-Z]{2,4})(:\\d+)?(/[a-zA-Z0-9\\.\\-~!@#$%^&*+?:_/=<>]*)?)', resp.text).group(1)
+            resp = self.session.get(crossdomain2)
+            passporturl = re.search("(https://passport[a-zA-Z0-9\\.\\-]+\\.([a-zA-Z]{2,4})(:\\d+)?(/[a-zA-Z0-9\\.\\-~!@#$%^&*+?:_/=<>]*)?)",resp.text.replace('\/','/')).group(0)
+            resp = self.session.get(passporturl)
             login_info = json.loads(re.search('\((\{.*\})\)', resp.text).group(1))
             self.uid = login_info["userinfo"]["uniqueid"]
             print("%s 登录成功"%self.logincode)
-            resp = self.session.get("https://weibo.com/")
-            self.homeUrl = resp.url
         except Exception as e:
             print("%s 登录失败"%self.logincode)
             raise e
+
+    def __str__(self):
+        return "logincode:%s,password:%s,uid:%s,url:%s"%(self.logincode,self.password,self.uid,self.homeUrl)
+
+    def userInfo(self):
+        resp = self.session.get("https://weibo.com/")
+        self.homeUrl = resp.url
+        self.baseUrl = self.homeUrl[:self.homeUrl.index("home")-1]
+        fmDict = utils.getFMViewObjDict(resp.text)
+        follow, fans, weibo = utils.getMyInfo(fmDict)
+        return follow, fans, weibo
 
     def __postData(self,data):
         currTime = "%d" % (time.time()*1000)
@@ -58,7 +72,7 @@ class weibo(object):
             'https://weibo.com/aj/mblog/add?ajwvr=6&__rnd=%s'%currTime,data = data
         )
         try:
-            result, msg = utils.checkResultMessage(resp.content)
+            result, msg,data = utils.checkResultMessage(resp.content)
             if result == True:
                 print("消息发送成功:%s" % data["text"])
             else:
@@ -90,4 +104,38 @@ class weibo(object):
             picList.append(self.uploadPic(pic))
         self.__postData(utils.getImageStructure(message,"|".join(picList),len(picList)))
 
-        
+    def getFollowList(self,pageNum=1):
+        url = "https://weibo.com/p/100505%s/myfollow?t=1&cfs=&Pl_Official_RelationMyfollow__93_page=%d#Pl_Official_RelationMyfollow__93"%(self.uid,pageNum)
+        resp = self.session.get(url)
+        fmDict = utils.getFMViewObjDict(resp.text)
+        followList,pageCount = utils.getFollowList(fmDict)
+        return followList,pageNum < pageCount
+
+    def getFansList(self,pageNum=1):
+        url = "https://weibo.com/%s/fans?cfs=600&relate=fans&t=1&f=1&type=&Pl_Official_RelationFans__88_page=%d#Pl_Official_RelationFans__88"%(self.uid,pageNum)
+        resp = self.session.get(url)
+        fmDict = utils.getFMViewObjDict(resp.text)
+        fansList, pageCount = utils.getFansList(fmDict)
+        return fansList, pageNum < pageCount
+
+    def __getMyBlogList(self,pageNum,pagebar = 0):
+        url = "https://weibo.com/p/aj/v6/mblog/mbloglist?ajwvr=6&domain=100505&is_search=0&visible=0&is_all=1&is_tag=0&profile_ftype=1" \
+            "&pl_name=Pl_Official_MyProfileFeed__21&id=1005051656558815&script_uri=&feed_type=0" \
+            "&page=%d&pagebar=%d&pre_page=1&domain_op=100505&__rnd=1516869103198"%(pageNum,pagebar)
+        resp = self.session.get(url)
+        _flag,msg,data = utils.checkResultMessage(resp.text)
+        if _flag:
+            contentList = utils.getBlogList(data)
+            return contentList
+
+    def getMyBlogList(self,pageNum=1):
+        url = self.baseUrl + "/profile?pids=Pl_Official_MyProfileFeed__21&is_search=0&visible=0&is_all=1&is_tag=0&profile_ftype=1&page=%d&ajaxpagelet=1&ajaxpagelet_v6=1&__ref="%(pageNum)
+        resp = self.session.get(url)
+        htmlStr =  utils.getProfileHtml(resp.text)
+        blogList = utils.getBlogList(htmlStr)
+        blogList.extend(self.__getMyBlogList(pageNum,0))
+        blogList.extend(self.__getMyBlogList(pageNum,1))
+        return blogList
+
+
+

@@ -4,11 +4,11 @@
 >2.python2.7版在[https://github.com/XJouYi/SinaWeibo/releases/tag/v0.1]
 
 ## API
-| 名称        | 参数    |  说明  |
+| Name|Params|Remark|
 | --------   | -----:  | :----: |
-| uploadPic  | picPath                |   上传图片            |
-| postMessage| message                |   发送文本微博         |
-| postImage  | message,*picPaths      |   发送文本加图片微博(图片可多张)    |
+| uploadPic  | picPath                |上传图片|
+| postMessage| message                |发送文本微博|
+| postImage  | message,*picPaths      |发送文本加图片(图片可多张)|
 
 ## Demo
 >Demo.py
@@ -17,6 +17,8 @@
 >pip3 install requests
 
 >pip3 install rsa
+
+>pip3 install beautifulsoup4
 
 
 
