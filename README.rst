@@ -14,8 +14,8 @@
 | getFansList  | pageNum      |获取我的粉丝|
 | getMyBlogList  | pageNum      |获取我的微博|
 
-## 使用Demo
->test/test.py
+## Demo
+>Demo.py
 
 ## 依赖库
 >pip install requests
@@ -23,6 +23,5 @@
 >pip install rsa
 
 >pip install beautifulsoup4
-
 
 
