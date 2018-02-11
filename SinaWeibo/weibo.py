@@ -43,9 +43,9 @@ class Weibo(object):
             resp = self.session.post( 'https://login.sina.com.cn/sso/login.php?client=%s' %
                                       WBCLIENT, data=WbUtils.getLoginStructure(self.logincode,self.password,pre_login)
             )
-            crossdomain2 = re.search('(http[s]{0,1}://[a-zA-Z0-9\\.\\-]+\\.([a-zA-Z]{2,4})(:\\d+)?(/[a-zA-Z0-9\\.\\-~!@#$%^&*+?:_/=<>]*)?)|((www.)|[a-zA-Z0-9\\.\\-]+\\.([a-zA-Z]{2,4})(:\\d+)?(/[a-zA-Z0-9\\.\\-~!@#$%^&*+?:_/=<>]*)?)', resp.text).group(1)
+            crossdomain2 = re.search('(https://[^;]*)',resp.text).group(1)
             resp = self.session.get(crossdomain2)
-            passporturl = re.search("(https://passport[a-zA-Z0-9\\.\\-]+\\.([a-zA-Z]{2,4})(:\\d+)?(/[a-zA-Z0-9\\.\\-~!@#$%^&*+?:_/=<>]*)?)",resp.text.replace('\/','/')).group(0)
+            passporturl = re.search("(https://passport[^\"]*)",resp.text.replace('\/', '/')).group(0)
             resp = self.session.get(passporturl)
             login_info = json.loads(re.search('\((\{.*\})\)', resp.text).group(1))
             self.uid = login_info["userinfo"]["uniqueid"]
