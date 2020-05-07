@@ -49,9 +49,9 @@ class Weibo(object):
             resp = self.session.get(passporturl)
             login_info = json.loads(re.search('\((\{.*\})\)', resp.text).group(1))
             self.uid = login_info["userinfo"]["uniqueid"]
-            print("%s 登录成功"%self.logincode)
+            print("登录成功")
         except Exception as e:
-            print("%s 登录失败"%self.logincode)
+            print("登录失败")
             raise e
 
     def __str__(self):
@@ -108,14 +108,14 @@ class Weibo(object):
         self.__postData(WbUtils.getImageStructure(message,"|".join(picList),len(picList)))
 
     def getFollowList(self,pageNum=1):
-        url = "https://weibo.com/p/100505%s/myfollow?t=1&cfs=&Pl_Official_RelationMyfollow__93_page=%d#Pl_Official_RelationMyfollow__93"%(self.uid,pageNum)
+        url = "https://weibo.com/p/100505%s/myfollow?t=1&cfs=&Pl_Official_RelationMyfollow__95_page=%d#Pl_Official_RelationMyfollow__93"%(self.uid,pageNum)
         resp = self.session.get(url)
         fmDict = WbUtils.getFMViewObjDict(resp.text)
         followList,pageCount = WbUtils.getFollowList(fmDict)
         return followList,pageNum < pageCount
 
     def getFansList(self,pageNum=1):
-        url = "https://weibo.com/%s/fans?cfs=600&relate=fans&t=1&f=1&type=&Pl_Official_RelationFans__88_page=%d#Pl_Official_RelationFans__88"%(self.uid,pageNum)
+        url = "https://weibo.com/%s/fans?cfs=600&relate=fans&t=1&f=1&type=&Pl_Official_RelationFans__90_page=%d#Pl_Official_RelationFans__88"%(self.uid,pageNum)
         resp = self.session.get(url)
         fmDict = WbUtils.getFMViewObjDict(resp.text)
         fansList, pageCount = WbUtils.getFansList(fmDict)
@@ -124,7 +124,7 @@ class Weibo(object):
     def __getMyBlogList(self,pageNum,pagebar = 0):
         url = "https://weibo.com/p/aj/v6/mblog/mbloglist?ajwvr=6&domain=100505&is_search=0&visible=0&is_all=1&is_tag=0&profile_ftype=1" \
             "&pl_name=Pl_Official_MyProfileFeed__21&id=1005051656558815&script_uri=&feed_type=0" \
-            "&page=%d&pagebar=%d&pre_page=1&domain_op=100505&__rnd=1516869103198"%(pageNum,pagebar)
+            "&page=%d&pagebar=%d&pre_page=%d&domain_op=100505&__rnd=1516869103198"%(pageNum,pageNum,pageNum+1)
         resp = self.session.get(url)
         _flag,msg,data = WbUtils.checkResultMessage(resp.text)
         if _flag:
@@ -139,5 +139,16 @@ class Weibo(object):
         blogList.extend(self.__getMyBlogList(pageNum,0))
         blogList.extend(self.__getMyBlogList(pageNum,1))
         return blogList
+
+    def detBlog(self,mid):
+        self.session.headers["Referer"] = "https://weibo.com/p/100505"+self.uid+"/home?from=page_100505_profile&wvr=6&mod=data&is_all=1"
+        self.session.headers["Host"] = "weibo.com"
+        self.session.headers["Origin"] = "https://weibo.com"
+        resp = self.session.post(
+            'https://weibo.com/aj/mblog/del?ajwvr=6', data={
+                'mid': mid
+            }
+        )
+        return resp
 
 

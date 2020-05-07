@@ -48,6 +48,7 @@ class WbUtils(object):
         }
         return data
 
+    @staticmethod
     def getTextStructure(message):
         data = {
             'location': 'v6_content_home',
@@ -66,6 +67,7 @@ class WbUtils(object):
         }
         return data
 
+    @staticmethod
     def getImageStructure(message, pic_id, picNum):
         data = WbUtils.getTextStructure(message)
         data["pic_id"] = pic_id
@@ -73,6 +75,7 @@ class WbUtils(object):
             data["updata_img_num"] = picNum
         return data
 
+    @staticmethod
     def checkResultMessage(resultJson):
         resultFlag = False
         resultObject = json.loads(resultJson)
@@ -86,6 +89,7 @@ class WbUtils(object):
         except Exception as e:
             raise e
 
+    @staticmethod
     def getFMViewObjDict(htmlcontent):
         FMViewDict = {}
         soup = BeautifulSoup(htmlcontent, 'html.parser')
@@ -100,6 +104,7 @@ class WbUtils(object):
                     FMViewDict[str(fmObj['domid'])] = fmObj
         return FMViewDict
 
+    @staticmethod
     def getMyInfo(fmDict):
         follow = 0
         fans = 0
@@ -122,17 +127,20 @@ class WbUtils(object):
             print("获取用户基本信息异常")
             raise e
 
+    @staticmethod
     def __getPageCount(soup):
         pageCount = 0
         W_pages = soup.find("div", attrs={"class": "W_pages"})
-        pageList = W_pages.find_all("a", attrs={"class": "page S_txt1"})
-        if len(pageList) > 0:
-            pageCount = pageList[-1].get_text().strip()
+        if W_pages != None:
+            pageList = W_pages.find_all("a", attrs={"class": "page S_txt1"})
+            if len(pageList) > 0:
+                pageCount = pageList[-1].get_text().strip()
         return pageCount
 
+    @staticmethod
     def getFollowList(fmDict):
         followList = []
-        fmhtml = fmDict.get('Pl_Official_RelationMyfollow__93')['html']
+        fmhtml = fmDict.get('Pl_Official_RelationMyfollow__95')['html']
         soup = BeautifulSoup(fmhtml, 'html.parser')
         for li in soup.find_all("li", attrs={"class": "member_li S_bg1"}):
             node = li.find("a", attrs={"node-type": "screen_name"})
@@ -147,7 +155,7 @@ class WbUtils(object):
 
     def getFansList(fmDict):
         fansList = []
-        fmhtml = fmDict.get('Pl_Official_RelationFans__88')['html']
+        fmhtml = fmDict.get('Pl_Official_RelationFans__90')['html']
         soup = BeautifulSoup(fmhtml, 'html.parser')
         for li in soup.find_all("li", attrs={"class": "follow_item S_line2", "node-type": "userItem"}):
             node = li.find("a", attrs={"class": "S_txt1"})

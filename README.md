@@ -13,6 +13,7 @@
 | getFollowList  | pageNum      |获取我的关注|
 | getFansList  | pageNum      |获取我的粉丝|
 | getMyBlogList  | pageNum      |获取我的微博|
+| detBlog  | blogId      |删除微博|
 
 ## 使用Demo
 >test/test.py
