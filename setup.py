@@ -1,7 +1,7 @@
 from setuptools import setup,find_packages
 setup(
         name='sinaweibo',
-        version='0.4',
+        version='0.5',
         description='SinaWeibo',
         author='xjouyi@163.com',
         author_email='xjouyi@163.com',
